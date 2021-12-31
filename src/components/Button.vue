@@ -8,7 +8,7 @@
 export default {
   name: "ButtonComponent",
   props: ["test"],
-  data: function () {},
+  // data: function () {},
 };
 </script>
 

@@ -6,11 +6,11 @@
       :row-height="30"
       :responsive="false"
       :vertical-compact="false"
-      :prevent-collision="true"
       :use-css-transforms="true"
       :is-draggable="draggable"
       :is-resizable="resizable"
       :use-style-cursor="true"
+      class="grid-layout"
     >
       <grid-item
         v-for="item in layout"
@@ -21,10 +21,13 @@
         :i="item.i"
         :key="item.i"
         :is-draggable="true"
+        @moved="movedEvent"
+        :class="{ 'grid-item': abso }"
       >
-        <div :is="item.ui" :test="test" />
-        <!-- <div v-html="item.ui" /> -->
-        <!-- {{ item.ui.__file }} -->
+        <div @mousedown="clickItem" @mouseup="unclickItem" @click="clickItems">
+          {{ item.i }}
+        </div>
+        <!-- <div :is="item.ui" :test="test">{{ item.i }}</div> -->
       </grid-item>
       <div></div>
     </grid-layout>
@@ -33,43 +36,100 @@
 
 <script>
 import VueGridLayout from "vue-grid-layout";
-import ButtonComponent from "./components/Button.vue";
+// import ButtonComponent from "./components/Button.vue";
 export default {
   name: "App",
   components: {
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
-    ButtonComponent,
+    // ButtonComponent,
   },
   data: function () {
     return {
       layout: [
-        // { x: 0, y: 0, w: 2, h: 2, i: "0" },
-        // { x: 2, y: 0, w: 2, h: 2, i: "1" },
         { x: 0, y: 0, w: 2, h: 2, i: "0", ui: "button-component" },
         { x: 2, y: 0, w: 2, h: 2, i: "1", ui: "button-component" },
-        { x: 4, y: 0, w: 2, h: 2, i: "2", ui: "button-component" },
-        { x: 0, y: 2, w: 2, h: 2, i: "6", ui: "button-component" },
-        { x: 2, y: 2, w: 2, h: 2, i: "7", ui: "button-component" },
-        { x: 4, y: 2, w: 2, h: 2, i: "8", ui: "button-component" },
-        // { x: 0, y: 2, w: 2, h: 2, i: "6", ui: "<span>1</span>" },
-        // { x: 2, y: 2, w: 2, h: 2, i: "7", ui: "<span>1</span>" },
-        // { x: 4, y: 2, w: 2, h: 2, i: "8", ui: "<span>1</span>" },
+        { x: 0, y: 2, w: 2, h: 2, i: "2", ui: "button-component" },
+        { x: 2, y: 2, w: 2, h: 2, i: "3", ui: "button-component" },
       ],
       draggable: true,
       resizable: true,
+      tempLayout: [
+        { x: 0, y: 0, w: 2, h: 2, i: "0", ui: "button-component" },
+        { x: 2, y: 0, w: 2, h: 2, i: "1", ui: "button-component" },
+        { x: 0, y: 2, w: 2, h: 2, i: "2", ui: "button-component" },
+        { x: 2, y: 2, w: 2, h: 2, i: "3", ui: "button-component" },
+      ],
+      newLayout: [],
+      abso: false,
     };
   },
   methods: {
     test: function () {
       console.log("test");
     },
-  },
-  watch: {
-    layout: function () {
-      console.log(this.layout);
+    movedEvent: function (i, newX, newY) {
+      console.log("MOVE i=" + i + ", X=" + newX + ", Y=" + newY);
+      const tempLayout = this.tempLayout;
+      console.log(tempLayout);
+      for (let i = 0; i <= tempLayout.length; i++) {
+        console.log(i);
+        if (newX !== tempLayout[i].x && newY !== tempLayout[i].y) {
+          console.log("a");
+          this.newLayout = tempLayout;
+          // const itemDragIndex = this.layout.findIndex((item) => item.i === i);
+          // this.newLayout[itemDragIndex] = this.layout[itemDragIndex];
+          // this.layout = this.newLayout;
+          // this.tempLayout = this.newLayout;
+        } else {
+          this.layout;
+          break;
+        }
+      }
+      // for (let i = 0; i < this.tempLayout.length; i++) {
+      //   if (newX === this.tempLayout[i].x && newY === this.tempLayout[i].y) {
+      //     console.log("Trung vi tri");
+      //     break;
+      //   } else {
+      //     console.log("Ko trung");
+      //     break;
+      //   }
+      // }
+      // this.tempLayout.filter((item) => {
+      //   if (newX === item.x && newY === item.y) {
+      //     console.log("Trung vi tri");
+      //     return;
+      //   } else {
+      //     console.log("Ko trung");
+      //     return;
+      //   }
+      // });
+      // m.map((item) => {
+      //   if (newX === item.x && newY === item.y) {
+      //     console.log("111");
+      //   } else {
+      //     console.log("2222");
+      //   }
+      // });
+    },
+    clickItem() {
+      this.abso = true;
+      console.log("abso - ", this.abso);
+    },
+    unclickItem() {
+      this.abso = false;
+      console.log("abso - ", this.abso);
+    },
+    clickItems() {
+      console.log("Hello");
     },
   },
+  // watch: {
+  //   layout: function () {
+  //     console.log(this.layout);
+  //     // console.log(this.tempLayout);
+  //   },
+  // },
 };
 </script>
 
@@ -134,5 +194,13 @@ export default {
   background-origin: content-box;
   box-sizing: border-box;
   cursor: pointer;
+}
+.grid-layout {
+  position: relative !important;
+}
+
+.grid-item {
+  position: absolute !important;
+  z-index: 10 !important;
 }
 </style>

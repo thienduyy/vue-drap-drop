@@ -22,9 +22,8 @@
         :key="item.i"
         :is-draggable="true"
         @moved="movedEvent"
-        :class="{ 'grid-item': abso }"
       >
-        <div @mousedown="clickItem" @mouseup="unclickItem" @click="clickItems">
+        <div>
           {{ item.i }}
         </div>
         <!-- <div :is="item.ui" :test="test">{{ item.i }}</div> -->
@@ -60,8 +59,6 @@ export default {
         { x: 0, y: 2, w: 2, h: 2, i: "2", ui: "button-component" },
         { x: 2, y: 2, w: 2, h: 2, i: "3", ui: "button-component" },
       ],
-      newLayout: [],
-      abso: false,
     };
   },
   methods: {
@@ -70,58 +67,37 @@ export default {
     },
     movedEvent: function (i, newX, newY) {
       console.log("MOVE i=" + i + ", X=" + newX + ", Y=" + newY);
-      const tempLayout = this.tempLayout;
-      console.log(tempLayout);
-      for (let i = 0; i <= tempLayout.length; i++) {
-        console.log(i);
-        if (newX !== tempLayout[i].x && newY !== tempLayout[i].y) {
-          console.log("a");
-          this.newLayout = tempLayout;
-          // const itemDragIndex = this.layout.findIndex((item) => item.i === i);
-          // this.newLayout[itemDragIndex] = this.layout[itemDragIndex];
-          // this.layout = this.newLayout;
-          // this.tempLayout = this.newLayout;
-        } else {
-          this.layout;
-          break;
-        }
+      let tempLayout = JSON.parse(JSON.stringify(this.tempLayout));
+      let layout = JSON.parse(JSON.stringify(this.layout));
+      const bool = tempLayout.filter(
+        (item) => item.x === newX && item.y === newY
+      );
+      if (bool.length === 0) {
+        console.log("a");
+        const changeLayoutItem = tempLayout.findIndex((item) => item.i === i);
+        tempLayout[changeLayoutItem] = layout[changeLayoutItem];
+        this.layout = tempLayout;
+        this.tempLayout = JSON.parse(JSON.stringify(tempLayout));
+      } else {
+        console.log("b");
+        this.layout;
       }
-      // for (let i = 0; i < this.tempLayout.length; i++) {
-      //   if (newX === this.tempLayout[i].x && newY === this.tempLayout[i].y) {
-      //     console.log("Trung vi tri");
-      //     break;
-      //   } else {
-      //     console.log("Ko trung");
-      //     break;
-      //   }
+
+      // console.log("poll", bool);
+      // if (bool.length === 0) {
+      //   console.log("aa");
+      //   // let newLayout = JSON.parse(JSON.stringify(tempLayout));
+      //   const itemDragIndex = tempLayout.findIndex((item) => item.i === i);
+      //   tempLayout[itemDragIndex] = this.layout[itemDragIndex];
+      //   this.layout = tempLayout;
+      //   // this.tempLayout = newLayout;
+      //   console.log("layout", this.layout);
+      //   console.log("before layout", this.tempLayout);
+      // } else {
+      //   this.layout;
+      //   console.log("b");
       // }
-      // this.tempLayout.filter((item) => {
-      //   if (newX === item.x && newY === item.y) {
-      //     console.log("Trung vi tri");
-      //     return;
-      //   } else {
-      //     console.log("Ko trung");
-      //     return;
-      //   }
-      // });
-      // m.map((item) => {
-      //   if (newX === item.x && newY === item.y) {
-      //     console.log("111");
-      //   } else {
-      //     console.log("2222");
-      //   }
-      // });
-    },
-    clickItem() {
-      this.abso = true;
-      console.log("abso - ", this.abso);
-    },
-    unclickItem() {
-      this.abso = false;
-      console.log("abso - ", this.abso);
-    },
-    clickItems() {
-      console.log("Hello");
+      // console.log(!!bool.length);
     },
   },
   // watch: {

@@ -59,6 +59,7 @@ export default {
         { x: 0, y: 2, w: 2, h: 2, i: "2", ui: "button-component" },
         { x: 2, y: 2, w: 2, h: 2, i: "3", ui: "button-component" },
       ],
+      isVertical: false,
     };
   },
   methods: {
@@ -69,9 +70,19 @@ export default {
       console.log("MOVE i=" + i + ", X=" + newX + ", Y=" + newY);
       let tempLayout = JSON.parse(JSON.stringify(this.tempLayout));
       let layout = JSON.parse(JSON.stringify(this.layout));
-      const bool = tempLayout.filter(
-        (item) => item.x === newX && item.y === newY
-      );
+      const itemMove = tempLayout[i];
+      const bool = tempLayout.filter((item) => {
+        if (
+          item.x < newX &&
+          newX < itemMove.w + item.x &&
+          item.y < newY &&
+          newY < itemMove.h + item.y
+        )
+          return true;
+        if (item.x === newX && item.y === newY) return true;
+        return false;
+      });
+      console.log(bool);
       if (bool.length === 0) {
         console.log("a");
         const changeLayoutItem = tempLayout.findIndex((item) => item.i === i);
@@ -81,24 +92,15 @@ export default {
       } else {
         console.log("b");
         this.layout;
+        this.tempLayout = JSON.parse(JSON.stringify(this.layout));
       }
-
-      // console.log("poll", bool);
-      // if (bool.length === 0) {
-      //   console.log("aa");
-      //   // let newLayout = JSON.parse(JSON.stringify(tempLayout));
-      //   const itemDragIndex = tempLayout.findIndex((item) => item.i === i);
-      //   tempLayout[itemDragIndex] = this.layout[itemDragIndex];
-      //   this.layout = tempLayout;
-      //   // this.tempLayout = newLayout;
-      //   console.log("layout", this.layout);
-      //   console.log("before layout", this.tempLayout);
-      // } else {
-      //   this.layout;
-      //   console.log("b");
-      // }
-      // console.log(!!bool.length);
     },
+    // moveEvent: function (i, newX, newY) {
+    //   if (newX === this.tempLayout[i].x && newY === this.tempLayout[i].y) {
+    //     console.log("object");
+    //     this.layout = JSON.parse(JSON.stringify(this.tempLayout));
+    //   }
+    // },
   },
   // watch: {
   //   layout: function () {
